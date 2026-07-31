@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "provider-pool"
+version = "0.1.0"
+description = "Multi-key, multi-model LLM provider pool with circuit-breaking and Redis-backed slot state"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [
+    { name = "phurhard" },
+]
+dependencies = [
+    "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+redis = ["redis[asyncio]>=5.0"]
+google = ["google-genai>=1.0"]
+openai = ["openai>=1.0"]
+anthropic = ["anthropic>=0.40"]
+all = ["provider-pool[redis,google,openai,anthropic]"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["provider_pool"]
