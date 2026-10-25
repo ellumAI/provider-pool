@@ -253,7 +253,7 @@ class GeminiProvider(LLMProvider):
                 # Tool result → Gemini function response
                 contents.append(
                     {
-                        "role": "function",
+                        "role": "user",
                         "parts": [
                             {
                                 "function_response": {
