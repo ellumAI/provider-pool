@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import contextvars
 import logging
 import uuid
 from collections.abc import AsyncIterator
@@ -483,9 +484,12 @@ class GeminiProvider(LLMProvider):
         queue: asyncio.Queue[StreamEvent] = asyncio.Queue()
         loop = asyncio.get_running_loop()
 
-        # Run the blocking Gemini stream in a thread pool worker
+        # Run the blocking Gemini stream in a thread pool worker. The context
+        # copy keeps contextvars (e.g. the caller's OpenTelemetry span) visible
+        # in the thread, as asyncio.to_thread does.
         thread_future = loop.run_in_executor(
             None,  # default ThreadPoolExecutor
+            contextvars.copy_context().run,
             self._stream_in_thread,
             contents,
             generate_config,
